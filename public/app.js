@@ -18,7 +18,7 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
-import { planejarAdicao, planejarNovaCompra } from "./logica.js";
+import { etapaDoItem, planejarAdicao, planejarNovaCompra } from "./logica.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, texto) => {
@@ -83,6 +83,7 @@ function iniciar() {
   const novoItemLista = (dados) => ({
     nome: dados.nome,
     qtd: dados.qtd || "",
+    etapa: "verificar",
     comprado: false,
     recorrenteId: dados.recorrenteId || null,
     criadoEm: serverTimestamp(),
@@ -184,7 +185,7 @@ function iniciar() {
     }
 
     if (existente) {
-      const mudancas = { comprado: false };
+      const mudancas = { etapa: "verificar", comprado: false };
       if (qtd) mudancas.qtd = qtd;
       if (vinculo) mudancas.recorrenteId = vinculo;
       batch.update(doc(db, "lista", existente.id), mudancas);
@@ -290,7 +291,9 @@ function iniciar() {
   $("nc-confirmar").addEventListener("click", () => {
     const plano = planejarNovaCompra(lista, recorrentes, $("nc-manter").checked);
     const batch = writeBatch(db);
-    plano.desmarcar.forEach((id) => batch.update(doc(db, "lista", id), { comprado: false }));
+    plano.verificar.forEach((id) =>
+      batch.update(doc(db, "lista", id), { etapa: "verificar", comprado: false })
+    );
     plano.apagar.forEach((id) => batch.delete(doc(db, "lista", id)));
     plano.criar.forEach((r) =>
       batch.set(doc(collection(db, "lista")), novoItemLista({ nome: r.nome, qtd: r.qtd, recorrenteId: r.id }))
@@ -302,34 +305,72 @@ function iniciar() {
   });
 
   // ---------- render ----------
-  function linhaLista(it) {
-    const recorrente = modeloValido(it.recorrenteId);
-    const li = el("li", "item" + (it.comprado ? " feito" : ""));
+  function moverEtapa(it, etapa) {
+    updateDoc(doc(db, "lista", it.id), {
+      etapa,
+      comprado: etapa === "carrinho",
+    }).catch(erro);
+  }
 
-    const label = el("label");
-    const chk = document.createElement("input");
-    chk.type = "checkbox";
-    chk.id = "chk-" + it.id;
-    chk.checked = !!it.comprado;
-    chk.addEventListener("change", () => {
-      updateDoc(doc(db, "lista", it.id), { comprado: chk.checked }).catch(erro);
-    });
-    label.append(chk, el("span", "nome", it.nome));
-    if (it.qtd) label.append(el("span", "qtd", it.qtd));
-    li.append(label);
+  function linhaLista(it, etapa) {
+    const recorrente = modeloValido(it.recorrenteId);
+    const li = el("li", "item" + (etapa === "carrinho" ? " feito" : ""));
+
+    const rotulo = el("div", "rotulo");
+    rotulo.append(el("span", "nome", it.nome));
+    if (etapa === "verificar") {
+      const qtd = el("input", "qtd-editor");
+      qtd.type = "text";
+      qtd.maxLength = 12;
+      qtd.value = it.qtd || "";
+      qtd.placeholder = "Qtd";
+      qtd.setAttribute("aria-label", `Quantidade de ${it.nome}`);
+      qtd.addEventListener("change", () => {
+        const valor = qtd.value.trim();
+        if (valor !== (it.qtd || "")) {
+          updateDoc(doc(db, "lista", it.id), { qtd: valor }).catch(erro);
+        }
+      });
+      rotulo.append(qtd);
+    } else if (it.qtd) {
+      rotulo.append(el("span", "qtd", it.qtd));
+    }
+    li.append(rotulo);
+
+    const acoes = el("div", "item-acoes");
+    if (etapa === "verificar") {
+      const avancar = el("button", "etapa-btn", "Para comprar");
+      avancar.type = "button";
+      avancar.addEventListener("click", () => moverEtapa(it, "comprar"));
+      acoes.append(avancar);
+    } else if (etapa === "comprar") {
+      const voltar = el("button", "etapa-btn voltar", "Verificar");
+      voltar.type = "button";
+      voltar.addEventListener("click", () => moverEtapa(it, "verificar"));
+      const avancar = el("button", "etapa-btn", "No carrinho");
+      avancar.type = "button";
+      avancar.addEventListener("click", () => moverEtapa(it, "carrinho"));
+      acoes.append(voltar, avancar);
+    } else {
+      const voltar = el("button", "etapa-btn voltar", "Para comprar");
+      voltar.type = "button";
+      voltar.addEventListener("click", () => moverEtapa(it, "comprar"));
+      acoes.append(voltar);
+    }
 
     const tag = el("button", "tag", recorrente ? "Recorrente" : "Avulso");
     tag.type = "button";
     tag.setAttribute("aria-pressed", String(recorrente));
     tag.title = recorrente ? "Tocar para deixar de repetir" : "Tocar para repetir a cada nova compra";
     tag.addEventListener("click", () => alternarRecorrente(it));
-    li.append(tag);
+    acoes.append(tag);
 
     const del = el("button", "del", "×");
     del.type = "button";
     del.setAttribute("aria-label", "Tirar " + it.nome + " desta compra");
     del.addEventListener("click", () => removerDaLista(it));
-    li.append(del);
+    acoes.append(del);
+    li.append(acoes);
     return li;
   }
 
@@ -381,37 +422,44 @@ function iniciar() {
     const pronto = carregouLista && carregouRec;
 
     // resumo
-    const pendentes = lista.filter((i) => !i.comprado).length;
+    const abertos = lista.filter((i) => etapaDoItem(i) !== "carrinho").length;
     $("resumo").textContent = !pronto
       ? "Carregando a lista…"
       : lista.length === 0
       ? "Lista vazia"
-      : `${pendentes} para comprar · ${recorrentes.length} recorrentes`;
+      : `${abertos} em aberto · ${recorrentes.length} recorrentes`;
 
     $("nova-compra").disabled = !pronto || (lista.length === 0 && recorrentes.length === 0);
 
     // lista
     const ordenados = lista.slice().sort(ordenar);
-    const comprar = ordenados.filter((i) => !i.comprado);
-    const carrinho = ordenados.filter((i) => i.comprado);
+    const verificar = ordenados.filter((i) => etapaDoItem(i) === "verificar");
+    const comprar = ordenados.filter((i) => etapaDoItem(i) === "comprar");
+    const carrinho = ordenados.filter((i) => etapaDoItem(i) === "carrinho");
+
+    const ulV = $("lista-verificar");
+    ulV.replaceChildren();
+    if (!pronto) {
+      ulV.append(vazio("Buscando os itens…"));
+    } else if (verificar.length === 0) {
+      ulV.append(vazio("Nada para verificar."));
+    } else {
+      verificar.forEach((it) => ulV.append(linhaLista(it, "verificar")));
+    }
 
     const ulC = $("lista-comprar");
     ulC.replaceChildren();
     if (!pronto) {
       ulC.append(vazio("Buscando os itens…"));
-    } else if (lista.length === 0) {
-      ulC.append(
-        vazio("Nada por aqui ainda. Adicione o primeiro item e use “Recorrente” para o que vocês compram sempre.")
-      );
     } else if (comprar.length === 0) {
-      ulC.append(vazio("Tudo no carrinho. Boa compra!"));
+      ulC.append(vazio("Nada para comprar por enquanto."));
     } else {
-      comprar.forEach((it) => ulC.append(linhaLista(it)));
+      comprar.forEach((it) => ulC.append(linhaLista(it, "comprar")));
     }
 
     const ulK = $("lista-carrinho");
     ulK.replaceChildren();
-    carrinho.forEach((it) => ulK.append(linhaLista(it)));
+    carrinho.forEach((it) => ulK.append(linhaLista(it, "carrinho")));
     $("faixa-carrinho").hidden = carrinho.length === 0;
 
     // recorrentes

@@ -4,7 +4,7 @@ Lista de compras compartilhada para duas pessoas. Site instalável no celular (P
 
 ## Como funciona
 
-- **Lista**: a compra em andamento. Cada item é marcado como comprado ao tocar.
+- **Lista**: o fluxo da compra em andamento é **Verificar → Para comprar → No carrinho**. Em Verificar, confira e ajuste a quantidade. É possível voltar uma etapa quando precisar.
 - **Recorrentes**: os itens que voltam a cada nova compra (não precisam ser mensais).
 - Ao adicionar, você escolhe **Só desta vez** ou **Recorrente**. Dá para mudar depois tocando na etiqueta do item.
 - **Nova compra**: os recorrentes voltam desmarcados, os avulsos já comprados saem e você decide se mantém os avulsos que ainda não comprou.
@@ -15,7 +15,9 @@ Lista de compras compartilhada para duas pessoas. Site instalável no celular (P
 | Coleção (Firestore) | Campos |
 | --- | --- |
 | `recorrentes/{id}` | `nome`, `qtd`, `criadoEm` |
-| `lista/{id}` | `nome`, `qtd`, `comprado`, `recorrenteId` (ou `null` se avulso), `criadoEm` |
+| `lista/{id}` | `nome`, `qtd`, `etapa` (`verificar`, `comprar` ou `carrinho`), `comprado` (compatibilidade), `recorrenteId` (ou `null` se avulso), `criadoEm` |
+
+Itens já existentes sem `etapa` continuam aparecendo em **Para comprar** ou **No carrinho**, conforme o campo `comprado`.
 
 A lógica de adicionar e de nova compra fica em `public/logica.js`, sem dependências, com testes em `tests/`.
 

@@ -1,10 +1,13 @@
 // Rode com: node tests/logica.test.mjs
 import assert from "node:assert/strict";
-import { norm, planejarAdicao, planejarNovaCompra } from "../public/logica.js";
+import { etapaDoItem, norm, planejarAdicao, planejarNovaCompra } from "../public/logica.js";
 
 // norm ignora acento, caixa e espaços
 assert.equal(norm("  Pão   de Forma "), "pao de forma");
 assert.equal(norm(null), "");
+assert.equal(etapaDoItem({ etapa: "verificar", comprado: false }), "verificar");
+assert.equal(etapaDoItem({ comprado: true }), "carrinho");
+assert.equal(etapaDoItem({ comprado: false }), "comprar");
 
 const rec = [
   { id: "r1", nome: "Arroz", qtd: "2" },
@@ -55,6 +58,7 @@ const rec = [
   ];
   const p = planejarNovaCompra(lista, rec, true);
   assert.deepEqual(p.desmarcar, ["a"]);
+  assert.deepEqual(p.verificar, ["a"]);
   assert.deepEqual(p.apagar.sort(), ["b", "d"]);
   assert.deepEqual(p.criar.map((r) => r.id), ["r2"]); // Café não estava na lista: volta
   assert.equal(p.avulsosComprados, 2);
@@ -68,6 +72,7 @@ const rec = [
   const lista = [{ id: "a", nome: "Arroz", comprado: false, recorrenteId: "r1" }];
   const p = planejarNovaCompra(lista, rec, true);
   assert.deepEqual(p.desmarcar, []);
+  assert.deepEqual(p.verificar, ["a"]);
   assert.deepEqual(p.criar.map((r) => r.id), ["r2"]);
 }
 {
@@ -78,6 +83,7 @@ const rec = [
   ];
   const p = planejarNovaCompra(lista, rec, true);
   assert.deepEqual(p.apagar, ["b"]);
+  assert.deepEqual(p.verificar, ["a"]);
 }
 {
   // lista vazia: todos os recorrentes entram

@@ -1,6 +1,6 @@
 // Service worker: guarda o "esqueleto" do app e o SDK do Firebase para abrir mesmo sem sinal.
 // Os dados em si ficam no cache offline do Firestore (IndexedDB), não aqui.
-const VERSAO = "cesta-v1";
+const VERSAO = "cesta-v2";
 const ESQUELETO = [
   "./",
   "index.html",

@@ -2,8 +2,16 @@
 //
 // Modelo de dados (Firestore, duas coleções):
 //   recorrentes/{id}  -> { nome, qtd }                       itens que voltam a cada nova compra
-//   lista/{id}        -> { nome, qtd, comprado, recorrenteId } a compra em andamento
+//   lista/{id}        -> { nome, qtd, etapa, comprado, recorrenteId } a compra em andamento
 // Um item da lista aponta para o seu modelo por `recorrenteId` (ou null, se for avulso).
+
+const ETAPAS = new Set(["verificar", "comprar", "carrinho"]);
+
+/** Mantém os documentos antigos compatíveis com o fluxo de três etapas. */
+export function etapaDoItem(item) {
+  if (ETAPAS.has(item.etapa)) return item.etapa;
+  return item.comprado ? "carrinho" : "comprar";
+}
 
 /** Normaliza para comparar nomes: sem acento, minúsculas, espaços únicos. */
 export function norm(s) {
@@ -38,6 +46,7 @@ export function planejarNovaCompra(lista, recorrentes, manterAvulsos) {
   const modeloIds = new Set(recorrentes.map((r) => r.id));
   const vistos = new Set();
   const desmarcar = [];
+  const verificar = [];
   const apagar = [];
   let avulsosComprados = 0;
   let avulsosPendentes = 0;
@@ -49,6 +58,7 @@ export function planejarNovaCompra(lista, recorrentes, manterAvulsos) {
         continue;
       }
       vistos.add(it.recorrenteId);
+      verificar.push(it.id);
       if (it.comprado) desmarcar.push(it.id);
     } else if (it.comprado) {
       apagar.push(it.id);
@@ -60,5 +70,5 @@ export function planejarNovaCompra(lista, recorrentes, manterAvulsos) {
   }
 
   const criar = recorrentes.filter((r) => !vistos.has(r.id));
-  return { desmarcar, apagar, criar, avulsosComprados, avulsosPendentes };
+  return { desmarcar, verificar, apagar, criar, avulsosComprados, avulsosPendentes };
 }
