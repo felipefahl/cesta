@@ -99,9 +99,9 @@ input[type="email"], input[type="password"], input[type="text"] {
 /* Listas */
 .faixa { display: flex; flex-direction: column; gap: 8px; }
 .lista { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 8px 6px 8px 14px; min-height: 52px; }
+.item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 10px 14px; min-height: 64px; }
 .item + .item { border-top: 1px solid var(--line); }
-.item label, .item .rotulo { flex: 1 1 100%; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 4px 0; }
+.item label, .item .rotulo { display: flex; align-items: center; gap: 12px; padding: 0; }
 .item label { cursor: default; }
 .item input[type="checkbox"], .check input[type="checkbox"] {
   appearance: none; -webkit-appearance: none; width: 24px; height: 24px; flex: 0 0 24px;
@@ -116,19 +116,20 @@ input[type="email"], input[type="password"], input[type="text"] {
 .item.feito .nome { text-decoration: line-through; color: var(--muted); font-weight: 400; }
 .tag { border-radius: 999px; padding: 6px 10px; min-height: 34px; font-size: 13px; font-weight: 600; background: transparent; color: var(--muted); border: 1px dashed var(--line); white-space: nowrap; }
 .tag[aria-pressed="true"] { background: var(--recur-bg); color: var(--recur); border: 1px solid transparent; }
-.etapa-btn { background: var(--accent); border: 0; border-radius: 9px; color: var(--accent-fg); min-height: 40px; padding: 0 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.etapa-btn { background: var(--accent); border: 0; border-radius: 9px; color: var(--accent-fg); min-height: 40px; padding: 0 12px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .etapa-btn.voltar { background: transparent; border: 1px solid var(--line); color: var(--muted); }
-.qtd-editor { width: 78px !important; min-height: 38px !important; padding: 6px !important; text-align: center; font-size: 14px; }
+.qtd-editor { width: 60px !important; min-height: 38px !important; padding: 6px !important; text-align: center; font-size: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-weight: 600; }
 .del { background: transparent; border: 0; min-width: 44px; height: 44px; border-radius: 10px; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 6px; }
 .del:hover { color: var(--danger); }
 .del.confirmar { color: var(--danger); font-size: 14px; font-weight: 700; }
-.item-acoes { width: 100%; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+.item-acoes { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .vazio { padding: 22px 16px; color: var(--muted); text-align: center; text-wrap: balance; }
 
-/* Nova compra */
-.nova p { color: var(--muted); font-size: 15px; text-wrap: pretty; }
-.check { display: flex; align-items: center; gap: 12px; }
-.check label { cursor: pointer; }
+.nova { display: flex; flex-direction: column; gap: 16px; }
+.nova h2 { margin-bottom: 4px; }
+.nova p { color: var(--muted); font-size: 15px; text-wrap: pretty; margin-bottom: 12px; }
+.check { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.check label { cursor: pointer; font-size: 14px; }
 .confirma { display: flex; gap: 8px; flex-wrap: wrap; }
 .confirma .btn-primary { flex: 1 1 180px; }
 .confirma .btn-sec { flex: 1 1 110px; }
