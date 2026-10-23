@@ -99,7 +99,7 @@ input[type="email"], input[type="password"], input[type="text"] {
 /* Listas */
 .faixa { display: flex; flex-direction: column; gap: 8px; }
 .lista { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 10px 14px; min-height: 64px; }
+.item { display: flex; flex-direction: column; gap: 10px; padding: 14px; min-height: 80px; }
 .item + .item { border-top: 1px solid var(--line); }
 .item label, .item .rotulo { display: flex; align-items: center; gap: 12px; padding: 0; }
 .item label { cursor: default; }
@@ -111,18 +111,18 @@ input[type="email"], input[type="password"], input[type="text"] {
 .item input[type="checkbox"]:checked::after, .check input[type="checkbox"]:checked::after {
   content: ""; width: 6px; height: 11px; border: solid var(--accent-fg); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translate(-1px, -1px);
 }
-.nome { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
-.qtd { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 14px; }
+.nome { min-width: 0; overflow-wrap: anywhere; font-weight: 500; font-size: 17px; }
+.qtd { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 15px; }
 .item.feito .nome { text-decoration: line-through; color: var(--muted); font-weight: 400; }
 .tag { border-radius: 999px; padding: 6px 10px; min-height: 34px; font-size: 13px; font-weight: 600; background: transparent; color: var(--muted); border: 1px dashed var(--line); white-space: nowrap; }
 .tag[aria-pressed="true"] { background: var(--recur-bg); color: var(--recur); border: 1px solid transparent; }
-.etapa-btn { background: var(--accent); border: 0; border-radius: 9px; color: var(--accent-fg); min-height: 40px; padding: 0 12px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.etapa-btn { background: var(--accent); border: 0; border-radius: 9px; color: var(--accent-fg); min-height: 40px; padding: 0 14px; font-size: 14px; font-weight: 600; white-space: nowrap; }
 .etapa-btn.voltar { background: transparent; border: 1px solid var(--line); color: var(--muted); }
-.qtd-editor { width: 60px !important; min-height: 38px !important; padding: 6px !important; text-align: center; font-size: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-weight: 600; }
+.qtd-editor { width: 64px !important; min-height: 38px !important; padding: 6px !important; text-align: center; font-size: 15px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-weight: 600; }
 .del { background: transparent; border: 0; min-width: 44px; height: 44px; border-radius: 10px; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 6px; }
 .del:hover { color: var(--danger); }
 .del.confirmar { color: var(--danger); font-size: 14px; font-weight: 700; }
-.item-acoes { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.item-acoes { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 4px; }
 .vazio { padding: 22px 16px; color: var(--muted); text-align: center; text-wrap: balance; }
 
 .nova { display: flex; flex-direction: column; gap: 16px; }
