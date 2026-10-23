@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cesta</title>
+  <meta name="theme-color" content="#0f6b5f">
+  <meta name="description" content="Lista de compras compartilhada com itens recorrentes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cesta">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <p class="nota" id="carregando">Abrindo a Cesta…</p>
+
+  <!-- Login -->
+  <section id="tela-login" class="card login" hidden>
+    <h1>Cesta</h1>
+    <p class="resumo">Entre com a conta de vocês para ver a lista.</p>
+    <p class="erro" id="aviso-config" hidden>Falta configurar o Firebase. Cole os dados do seu projeto em <code>public/firebase-config.js</code>.</p>
+    <form id="form-login" autocomplete="on">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+      <p class="erro" id="erro-login" role="alert" hidden></p>
+      <button class="btn-primary" type="submit" id="entrar">Entrar</button>
+    </form>
+  </section>
+
+  <!-- App -->
+  <div id="tela-app" hidden>
+    <header class="topo">
+      <div>
+        <h1>Cesta</h1>
+        <p class="resumo" id="resumo"></p>
+      </div>
+      <button type="button" class="link" id="sair">Sair</button>
+    </header>
+
+    <p class="offline" id="offline" role="status" hidden>Sem conexão. O que você mudar será enviado quando o sinal voltar.</p>
+
+    <form class="card add" id="form-add" autocomplete="off">
+      <div class="add-row">
+        <input type="text" id="nome" placeholder="O que falta? Ex.: arroz" maxlength="80" aria-label="Nome do item" required>
+        <input type="text" id="qtd" placeholder="Qtd" maxlength="12" aria-label="Quantidade (opcional)">
+      </div>
+      <div class="seg" role="radiogroup" aria-label="Tipo do item">
+        <input type="radio" name="tipo" id="tipo-avulso" value="avulso" checked>
+        <label for="tipo-avulso">Só desta vez</label>
+        <input type="radio" name="tipo" id="tipo-rec" value="recorrente">
+        <label for="tipo-rec" class="rec">Recorrente</label>
+      </div>
+      <button class="btn-primary" type="submit">Adicionar à lista</button>
+    </form>
+
+    <div class="abas" role="tablist" aria-label="Seções">
+      <button type="button" role="tab" id="aba-lista" aria-selected="true" aria-controls="painel-lista">Lista</button>
+      <button type="button" role="tab" id="aba-rec" aria-selected="false" aria-controls="painel-rec">Recorrentes</button>
+    </div>
+
+    <!-- Lista da compra atual -->
+    <div id="painel-lista" role="tabpanel" aria-labelledby="aba-lista" class="painel">
+      <section class="faixa" aria-labelledby="h-comprar">
+        <h2 id="h-comprar">Para comprar</h2>
+        <ul class="lista" id="lista-comprar"></ul>
+      </section>
+
+      <section class="faixa" id="faixa-carrinho" aria-labelledby="h-carrinho" hidden>
+        <h2 id="h-carrinho">No carrinho</h2>
+        <ul class="lista" id="lista-carrinho"></ul>
+      </section>
+
+      <section class="card nova" aria-labelledby="h-nova">
+        <h2 id="h-nova">Terminou a compra?</h2>
+        <p>Começar uma nova compra traz de volta os itens recorrentes, desmarcados.</p>
+        <button type="button" class="btn-sec" id="nova-compra">Nova compra</button>
+        <div id="nc-box" hidden>
+          <p id="nc-resumo"></p>
+          <div class="check">
+            <input type="checkbox" id="nc-manter" checked>
+            <label for="nc-manter">Manter os avulsos que ainda não comprei</label>
+          </div>
+          <div class="confirma">
+            <button type="button" class="btn-primary" id="nc-confirmar">Começar nova compra</button>
+            <button type="button" class="btn-sec calmo" id="nc-cancelar">Cancelar</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modelos recorrentes -->
+    <div id="painel-rec" role="tabpanel" aria-labelledby="aba-rec" class="painel" hidden>
+      <section class="faixa" aria-labelledby="h-rec">
+        <h2 id="h-rec">O que volta a cada nova compra</h2>
+        <ul class="lista" id="lista-rec"></ul>
+        <p class="nota">Excluir daqui tira o item de todas as próximas compras. Para tirar só desta vez, use o × na lista.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="aviso" id="aviso" role="status" hidden></div>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

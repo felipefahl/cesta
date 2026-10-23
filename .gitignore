@@ -1,0 +1,10 @@
+node_modules/
+.firebase/
+*.log
+.DS_Store
+
+# Nunca versionar credenciais
+.env
+.env.*
+*-service-account*.json
+serviceAccount*.json

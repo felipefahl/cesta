@@ -1,0 +1,15 @@
+# Site estático: sem comando de build, a pasta public é publicada como está.
+[build]
+  publish = "public"
+
+# O service worker precisa ser revalidado a cada visita para o celular pegar versões novas.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Só as duas contas de vocês leem e escrevem. A identificação é pelo UID, um código opaco
+// que aparece em Firebase Console > Authentication > Users. O UID não é segredo e não
+// permite entrar na conta, então pode ficar num repositório público. Nenhum e-mail fica aqui.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function permitido() {
+      return request.auth != null
+        && request.auth.uid in [
+          'TN0xJA6LVWWCMPh7DTzcVVnfowK2',
+          'bwgwnizm0sRPUZKZuEZkY9ilek02'
+        ];
+    }
+
+    match /lista/{id} {
+      allow read, write: if permitido();
+    }
+
+    match /recorrentes/{id} {
+      allow read, write: if permitido();
+    }
+  }
+}

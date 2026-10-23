@@ -1,0 +1,10 @@
+{
+  "name": "cesta",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/logica.test.mjs",
+    "serve": "npx serve public",
+    "deploy:regras": "firebase deploy --only firestore:rules"
+  }
+}
