@@ -99,9 +99,9 @@ input[type="email"], input[type="password"], input[type="text"] {
 /* Listas */
 .faixa { display: flex; flex-direction: column; gap: 8px; }
 .lista { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.item { display: flex; flex-direction: column; gap: 10px; padding: 14px; min-height: 80px; }
+.item { display: flex; flex-direction: column; gap: 12px; padding: 14px; min-height: 80px; }
 .item + .item { border-top: 1px solid var(--line); }
-.item label, .item .rotulo { display: flex; align-items: center; gap: 12px; padding: 0; }
+.item label, .item .rotulo { display: flex; align-items: center; gap: 12px; padding: 0; width: 100%; }
 .item label { cursor: default; }
 .item input[type="checkbox"], .check input[type="checkbox"] {
   appearance: none; -webkit-appearance: none; width: 24px; height: 24px; flex: 0 0 24px;
@@ -111,7 +111,7 @@ input[type="email"], input[type="password"], input[type="text"] {
 .item input[type="checkbox"]:checked::after, .check input[type="checkbox"]:checked::after {
   content: ""; width: 6px; height: 11px; border: solid var(--accent-fg); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translate(-1px, -1px);
 }
-.nome { min-width: 0; overflow-wrap: anywhere; font-weight: 500; font-size: 17px; }
+.nome { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; font-weight: 500; font-size: 17px; white-space: normal; }
 .qtd { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 15px; }
 .item.feito .nome { text-decoration: line-through; color: var(--muted); font-weight: 400; }
 .tag { border-radius: 999px; padding: 6px 10px; min-height: 34px; font-size: 13px; font-weight: 600; background: transparent; color: var(--muted); border: 1px dashed var(--line); white-space: nowrap; }
@@ -122,7 +122,7 @@ input[type="email"], input[type="password"], input[type="text"] {
 .del { background: transparent; border: 0; min-width: 44px; height: 44px; border-radius: 10px; color: var(--muted); font-size: 22px; line-height: 1; padding: 0 6px; }
 .del:hover { color: var(--danger); }
 .del.confirmar { color: var(--danger); font-size: 14px; font-weight: 700; }
-.item-acoes { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+.item-acoes { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 4px; width: 100%; }
 .vazio { padding: 22px 16px; color: var(--muted); text-align: center; text-wrap: balance; }
 
 .nova { display: flex; flex-direction: column; gap: 16px; }
